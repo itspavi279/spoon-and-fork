@@ -3,7 +3,6 @@ import { supabase } from "../supabaseClient"
 
 function AddMealModal({ onClose, onMealAdded, userId }) {
   const [name, setName] = useState("")
-  const [category, setCategory] = useState("All Meals")
   const [image, setImage] = useState("")
   const [recipe, setRecipe] = useState("")
   const [ingredientInput, setIngredientInput] = useState("")
@@ -39,7 +38,6 @@ function AddMealModal({ onClose, onMealAdded, userId }) {
       .from("meals")
       .insert({
         name: name.trim(),
-        category,
         image: image.trim() || null,
         recipe: recipe.trim() || null,
         user_id: userId,
@@ -88,18 +86,7 @@ function AddMealModal({ onClose, onMealAdded, userId }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-
-          <label className="modal__label">Category *</label>
-          <select
-            className="modal__input"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option>All Meals</option>
-            <option>Easy Meals</option>
-            <option>Recently Made</option>
-          </select>
-
+          
           <label className="modal__label">Ingredients *</label>
           <div className="modal__ingredient-row">
             <input

@@ -4,13 +4,9 @@ import { supabase } from "../supabaseClient"
 
 function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
   const [meals, setMeals] = useState([])
-  const [categories, setCategories] = useState([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
-  // refreshTrigger is a number that App.jsx increments whenever a new meal
-  // is added. Putting it in the dependency array means this effect re-runs
-  // automatically after a meal is saved, keeping the grid up to date.
   useEffect(() => {
     fetchMeals()
   }, [refreshTrigger])
@@ -21,9 +17,10 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
     const { data, error } = await supabase
       .from("meals")
       .select(`
-        id, name, category, image, recipe,
+        id, name, image, recipe,
         ingredients ( name )
       `)
+      // category is no longer fetched — it doesn't exist anymore
       .order("name")
 
     if (error) { console.error(error.message); setLoading(false); return }
@@ -34,32 +31,22 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
     }))
 
     setMeals(shaped)
-    const uniqueCategories = [...new Set(shaped.map((m) => m.category))]
-    setCategories(uniqueCategories)
     setLoading(false)
   }
 
-// Split the search input by comma to get individual search terms.
-// e.g. "tomato, Onion" → ["tomato", "onion"]
-const searchTerms = search
-  .split(",")
-  .map((term) => term.trim().toLowerCase())
-  .filter((term) => term.length > 0)
-  // filter removes any empty strings caused by trailing commas
+  // Split search input by comma, trim and lowercase each term
+  const searchTerms = search
+    .split(",")
+    .map((term) => term.trim().toLowerCase())
+    .filter((term) => term.length > 0)
 
-const filtered = meals.filter((meal) => {
-  // If the search box is empty, show everything
-  if (searchTerms.length === 0) return true
-
-  // For each search term, check if it matches the meal name
-  // OR any of the meal's ingredients.
-  // Every term must match something — this is an AND search,
-  // so "tomato, onion" only returns meals containing BOTH.
-  return searchTerms.every((term) =>
-    meal.name.toLowerCase().includes(term) ||
-    meal.ingredients.some((ing) => ing.toLowerCase().includes(term))
-  )
-})
+  const filtered = meals.filter((meal) => {
+    if (searchTerms.length === 0) return true
+    return searchTerms.every((term) =>
+      meal.name.toLowerCase().includes(term) ||
+      meal.ingredients.some((ing) => ing.toLowerCase().includes(term))
+    )
+  })
 
   if (loading) return <p style={{ padding: "24px" }}>Loading meals...</p>
 
@@ -75,26 +62,21 @@ const filtered = meals.filter((meal) => {
         />
       </div>
 
-      {categories.map((category) => {
-        const inCategory = filtered.filter((m) => m.category === category)
-        if (inCategory.length === 0) return null
-        return (
-          <div key={category} className="meal-grid__section">
-            <h3 className="meal-grid__category">{category}</h3>
-            <div className="meal-grid__row">
-              {inCategory.map((meal) => (
-                <MealCard
-                  key={meal.id}
-                  meal={meal}
-                  onAdd={onAdd}
-                  onRemove={onRemove}
-                  isSaved={savedMeals.some((m) => m.id === meal.id)}
-                />
-              ))}
-            </div>
-          </div>
-        )
-      })}
+      {/* All meals in one flat grid — no category grouping */}
+      <div className="meal-grid__row">
+        {filtered.map((meal) => (
+          <MealCard
+            key={meal.id}
+            meal={meal}
+            onAdd={onAdd}
+            onRemove={onRemove}
+            isSaved={savedMeals.some((m) => m.id === meal.id)}
+          />
+        ))}
+        {filtered.length === 0 && (
+          <p style={{ color: "#aaa", fontSize: "14px" }}>No meals match your search.</p>
+        )}
+      </div>
     </div>
   )
 }
