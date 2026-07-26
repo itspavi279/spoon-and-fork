@@ -1,4 +1,5 @@
 // open preview by typing npm run dev into terminal
+// update with git add . / git commit -m / git push
 
 import { useState, useEffect } from "react"
 import Navbar from "./components/Navbar"

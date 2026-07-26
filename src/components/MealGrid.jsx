@@ -39,10 +39,27 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
     setLoading(false)
   }
 
-  const filtered = meals.filter((meal) =>
-    meal.name.toLowerCase().includes(search.toLowerCase()) ||
-    meal.ingredients.some((i) => i.toLowerCase().includes(search.toLowerCase()))
+// Split the search input by comma to get individual search terms.
+// e.g. "tomato, Onion" → ["tomato", "onion"]
+const searchTerms = search
+  .split(",")
+  .map((term) => term.trim().toLowerCase())
+  .filter((term) => term.length > 0)
+  // filter removes any empty strings caused by trailing commas
+
+const filtered = meals.filter((meal) => {
+  // If the search box is empty, show everything
+  if (searchTerms.length === 0) return true
+
+  // For each search term, check if it matches the meal name
+  // OR any of the meal's ingredients.
+  // Every term must match something — this is an AND search,
+  // so "tomato, onion" only returns meals containing BOTH.
+  return searchTerms.every((term) =>
+    meal.name.toLowerCase().includes(term) ||
+    meal.ingredients.some((ing) => ing.toLowerCase().includes(term))
   )
+})
 
   if (loading) return <p style={{ padding: "24px" }}>Loading meals...</p>
 
