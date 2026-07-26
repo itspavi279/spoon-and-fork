@@ -36,11 +36,8 @@ body {
 .navbar__icons button { background: none; border: none; cursor: pointer; font-size: 24px; 
 }
 
-/*Main layout */
-.app_main { padding: 24px 32px; }
-
 /* Search */
-.meal-grid__toolbar {margin-bottom: 20px; }
+.meal-grid__toolbar {margin-bottom: 20px}
 .meal-grid__search { 
   width: 300px;
   padding: 10px 16px;
@@ -63,11 +60,19 @@ body {
   margin-bottom: 12px;
 }
 
+/* meal-grid__row (the horizontal scrolling card container) */
 .meal-grid__row {
   display: flex;
   gap: 12px;
   overflow-x: auto;
   padding-bottom: 8px;
+  padding-left: 48px;
+  padding-right: 48px;
+  margin-left: -48px;
+  margin-right: -48px;
+  /* to adjust the buffer: change all four 48px values together:
+     padding-left, padding-right, margin-left, and margin-right.
+     They must always match the left/right value in .app__main. */
 }
 
 /* Meal Card */
@@ -419,9 +424,26 @@ body {
   padding: 5px 10px;
 }
 
-/* ── Full-height calendar main ─────────────────────────── */
+/* ── Page layout ───────────────────────────────────────── */
+/* .app__main controls the outer padding of every page.
+   Change the two 48px values to adjust the left/right buffer. */
+.app__main {
+  padding: 24px 48px;
+}
+
+/* Calendar page removes padding so the split screen fills edge to edge */
 .app__main--calendar {
-  padding: 0; /* remove padding so the split screen fills edge to edge */
+  padding: 0;
+}/* ── Page layout ───────────────────────────────────────── */
+/* .app__main controls the outer padding of every page.
+   Change the two 48px values to adjust the left/right buffer. */
+.app__main {
+  padding: 24px 48px;
+}
+
+/* Calendar page removes padding so the split screen fills edge to edge */
+.app__main--calendar {
+  padding: 0;
 }
 
 /* Updated saved tray cards — match calendar meal card style */
