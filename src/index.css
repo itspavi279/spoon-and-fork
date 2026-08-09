@@ -16,25 +16,52 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 32px;
-  background-color: #fdf3ec
+  background-color: #fdf3ec;
 }
 
-.navbar__logo { font-size: 20px; font-weight: bold; color: #3a5a2a; }
-.navbar__tabs { display: flex; gap: 8px; }
-.navbar__tab {
-  padding: 10px 28px;
-  border-radius: 999px;
+.navbar__logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3a5a2a;
+}
+
+.navbar__icon-btn {
+  background: none;
   border: none;
-  font-size: 16px;
+  font-size: 24px;
   cursor: pointer;
-  background-color: #e8d5c4;
-  color: #2e1a0e
+  padding: 4px;
 }
 
-.navBar__tab--active { background-color: #8b1a1a; color: white; }
-.navbar__icons { display: flex; gap: 16px; font-size: 24px; }
-.navbar__icons button { background: none; border: none; cursor: pointer; font-size: 24px; 
+.navbar__icons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
 }
+
+.navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+}
+
+.navbar__email {
+  font-size: 12px;
+  color: black;
+}
+
+.navbar__logout {
+  background: none;
+  border: 1.5px solid #8b1a1a;
+  color: #8b1a1a;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.navbar__logout:hover { background: #8b1a1a; color: white; }
 
 /* Search */
 .meal-grid__toolbar {margin-bottom: 20px}
@@ -42,7 +69,7 @@ body {
   width: 300px;
   padding: 10px 16px;
   border-radius: 999px;
-  border: 1px solid #ccc;
+  border: 1px solid gray;
   background: white;
   font-size: 14px;
 }
@@ -81,7 +108,7 @@ body {
   max-width: 200px;
   width: 200px;
   height: 180px;
-  /* the card never grows or shrinks regardless of content length */
+  /* card never grows or shrinks regardless of content length */
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
@@ -325,7 +352,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #bbb;
+  color: black;
   text-align: center;
 }
 
@@ -387,12 +414,12 @@ body {
 
 .browse-panel__hint {
   font-size: 13px;
-  color: #888;
+  color: black;
 }
 
 .browse-panel__empty {
   font-size: 13px;
-  color: #aaa;
+  color: black;
 }
 
 .browse-panel__cards {
@@ -520,7 +547,7 @@ body {
 
 .auth__subtitle {
   text-align: center;
-  color: #888;
+  color: black;
   font-size: 14px;
   margin-top: -6px;
 }
@@ -558,7 +585,7 @@ body {
 .auth__toggle {
   text-align: center;
   font-size: 13px;
-  color: #888;
+  color: black;
 }
 
 .auth__toggle-btn {
@@ -569,38 +596,6 @@ body {
   font-size: 13px;
   text-decoration: underline;
 }
-
-/* ── Navbar additions ──────────────────────────────────── */
-.navbar__icon-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.navbar__user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 8px;
-}
-
-.navbar__email {
-  font-size: 12px;
-  color: #888;
-}
-
-.navbar__logout {
-  background: none;
-  border: 1.5px solid #8b1a1a;
-  color: #8b1a1a;
-  border-radius: 999px;
-  padding: 4px 12px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.navbar__logout:hover { background: #8b1a1a; color: white; }
 
 /* ── Add meal modal ────────────────────────────────────── */
 .modal-backdrop {
@@ -639,7 +634,7 @@ body {
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #888;
+  color: black;
 }
 
 .modal__body {

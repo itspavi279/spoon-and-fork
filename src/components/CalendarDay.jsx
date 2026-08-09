@@ -42,7 +42,7 @@ function CalendarDay({ date, meals, onClear }) {
         {/* Show empty placeholder slots for remaining capacity */}
         {Array.from({ length: slotsRemaining }).map((_, i) => (
           <div key={`empty-${i}`} className="calendar-day__empty">
-            Drop a meal here
+            
           </div>
         ))}
       </div>

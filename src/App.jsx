@@ -238,7 +238,7 @@ function App() {
                 className="saved-tray__label"
                 onClick={() => setActivePage("calendar")}
               >
-                Saved →
+                Go to Calendar →
               </button>
               <div className="saved-tray__row">
                 {savedMeals.map((meal) => (

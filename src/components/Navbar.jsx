@@ -1,47 +1,46 @@
 function Navbar({ activePage, setActivePage, onAddMealClick, onLogout, userEmail }) {
+  const pageToggleIcon = activePage === "browse" ? "🗓" : "🔍"
+  const pageToggleTitle = activePage === "browse" ? "Go to Calendar" : "Browse Meals"
+
+  const handlePageToggle = () => {
+    setActivePage(activePage === "browse" ? "calendar" : "browse")
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar__logo">Spoon & Fork</div>
-
-      <div className="navbar__tabs">
-        <button
-          className={`navbar__tab ${activePage === "browse" ? "navbar__tab--active" : ""}`}
-          onClick={() => setActivePage("browse")}
-        >
-          Browse
-        </button>
-        <button
-          className={`navbar__tab ${activePage === "calendar" ? "navbar__tab--active" : ""}`}
-          onClick={() => setActivePage("calendar")}
-        >
-          Ingredients
-        </button>
-      </div>
+      {}
 
       <div className="navbar__icons">
-        {/* Calendar icon */}
+        {/* Page toggle — switches between browse and calendar */}
         <button
           className="navbar__icon-btn"
-          onClick={() => setActivePage("calendar")}
-          title="My Calendar"
+          onClick={handlePageToggle}
+          title={pageToggleTitle}
         >
-          🗓
+          {pageToggleIcon}
         </button>
 
         {/* Bowl icon — opens the add meal modal */}
         <button
           className="navbar__icon-btn"
           onClick={onAddMealClick}
-          title="Add a meal"
+          title="Add a Meal"
         >
           🍲
         </button>
 
-        {/* User info and logout */}
-        <div className="navbar__user">
+         {/* Email display */}
           <span className="navbar__email">{userEmail}</span>
-          <button className="navbar__logout" onClick={onLogout}>Log out</button>
-        </div>
+
+        {/* Logout — icon only, no text */}
+        <button
+          className="navbar__icon-btn"
+          onClick={onLogout}
+          title="Log Out"
+        >
+          🚪
+        </button>
       </div>
     </nav>
   )
