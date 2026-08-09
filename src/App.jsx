@@ -1,5 +1,4 @@
 // open preview by typing npm run dev into terminal
-// update in terminal: git add . / git commit -m / git push
 
 import { useState, useEffect } from "react"
 import Navbar from "./components/Navbar"
@@ -68,7 +67,7 @@ function App() {
       .from("saved_meals")
       .select(`
         id, meal_id,
-        meals ( id, name, category, image, recipe, ingredients ( name ) )
+        meals ( id, name, image, recipe, ingredients ( name ) )
       `)
       .eq("user_id", userId)
     // .eq filters rows — only fetch this user's saved meals
@@ -120,7 +119,7 @@ function App() {
       .from("calendar_entries")
       .select(`
         id, date, slot_index,
-        meals ( id, name, category, image, recipe, ingredients ( name ) )
+        meals ( id, name, image, recipe, ingredients ( name ) )
       `)
       .eq("user_id", userId)
       .order("slot_index")
@@ -238,7 +237,7 @@ function App() {
                 className="saved-tray__label"
                 onClick={() => setActivePage("calendar")}
               >
-                Go to Calendar →
+                Saved →
               </button>
               <div className="saved-tray__row">
                 {savedMeals.map((meal) => (
