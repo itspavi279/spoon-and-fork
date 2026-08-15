@@ -1,16 +1,9 @@
 import { useState } from "react"
 
-function MealCard({ meal, onAdd, onRemove, isSaved }) {
+function MealCard({ meal, onAdd, onRemove, isSaved, onEdit, isOwned }) {
   const [isOpen, setIsOpen] = useState(false)
-
-  const handleToggleSave = (e) => {
-    e.stopPropagation() // prevent the click from also toggling the card open/closed
-    if (isSaved) {
-      onRemove(meal.id) // already saved — clicking again removes it
-    } else {
-      onAdd(meal)       // not saved — clicking adds it
-    }
-  }
+  // isOwned is true when the logged-in user created this meal —
+  // only owned meals show the edit button
 
   return (
     <div
@@ -29,18 +22,35 @@ function MealCard({ meal, onAdd, onRemove, isSaved }) {
         </>
       )}
 
-      {/* Open/expanded state */}
+      {/* Open state */}
       {isOpen && (
         <div className="meal-card__expanded">
           <div className="meal-card__title-bar">
             <span>{meal.name}</span>
-            <button
-              className="meal-card__add-btn"
-              onClick={handleToggleSave}
-            >
-              {/* Show checkmark if saved, + if not */}
-              {isSaved ? "✓" : "+"}
-            </button>
+            <div className="meal-card__actions">
+              {/* Only show edit button if this user owns the meal */}
+              {isOwned && (
+                <button
+                  className="meal-card__edit-btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onEdit(meal)
+                  }}
+                  title="Edit meal"
+                >
+                  ✎
+                </button>
+              )}
+              <button
+                className="meal-card__add-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  isSaved ? onRemove(meal.id) : onAdd(meal)
+                }}
+              >
+                {isSaved ? "✓" : "+"}
+              </button>
+            </div>
           </div>
           <div className="meal-card__body">
             <p><strong>All Ingredients:</strong></p>

@@ -678,7 +678,7 @@ body {
   padding: 10px 16px;
   background: #3a5a2a;
   color: white;
-  border: none;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
@@ -716,18 +716,10 @@ body {
   color: #8b1a1a;
 }
 
-.modal__footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  border-top: 1px solid #f0e8e0;
-}
-
 .modal__cancel {
   padding: 10px 20px;
   background: none;
-  border: 1.5px solid #e0cfc4;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -737,10 +729,73 @@ body {
   padding: 10px 20px;
   background: #3a5a2a;
   color: white;
-  border: none;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
 }
 
 .modal__save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Edit button in meal card title bar */
+.meal-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* groups the edit and add buttons together on the right */
+}
+
+.meal-card__edit-btn {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #8b1a1a
+}
+
+/* Delete button in modal footer */
+.modal__footer {
+  display: flex;
+  justify-content: space-between;
+  /* space-between pushes delete to the left, cancel/save to the right */
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #f0e8e0;
+}
+
+.modal__footer-right {
+  display: flex;
+  gap: 10px;
+}
+
+.modal__delete {
+  padding: 10px 16px;
+  background: #8b1a1a;
+  color: white;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.modal__delete:hover {
+  background: #c71616;
+}
+
+.modal__delete--confirm {
+  background: #8b1a1a;
+  color: white;
+}
+
+.modal__delete--confirm:hover {
+  background: #c71616;
+}

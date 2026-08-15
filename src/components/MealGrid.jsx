@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import MealCard from "./MealCard"
 import { supabase } from "../supabaseClient"
 
-function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
+function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger, onEdit, userId }) {
   const [meals, setMeals] = useState([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
@@ -17,7 +17,7 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
     const { data, error } = await supabase
       .from("meals")
       .select(`
-        id, name, image, recipe,
+        id, name, image, recipe, user_id,
         ingredients ( name )
       `)
       // category is no longer fetched — it doesn't exist anymore
@@ -65,13 +65,17 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger }) {
       {/* All meals in one flat grid — no category grouping */}
       <div className="meal-grid__row">
         {filtered.map((meal) => (
-          <MealCard
+         <MealCard
             key={meal.id}
             meal={meal}
             onAdd={onAdd}
             onRemove={onRemove}
             isSaved={savedMeals.some((m) => m.id === meal.id)}
-          />
+            onEdit={onEdit}
+            isOwned={meal.user_id === userId}
+            // isOwned compares the meal's creator to the logged-in user
+            // null user_id (seeded meals) will never match, hiding the button
+            />
         ))}
         {filtered.length === 0 && (
           <p style={{ color: "#aaa", fontSize: "14px" }}>No meals match your search.</p>

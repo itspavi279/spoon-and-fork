@@ -8,6 +8,7 @@ import Auth from "./components/Auth"
 import AddMealModal from "./components/AddMealModal"
 import { supabase } from "./supabaseClient"
 import "./index.css"
+import EditMealModal from "./components/EditMealModal"
 
 function App() {
   const [session, setSession] = useState(null)
@@ -23,6 +24,9 @@ function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   // refreshTrigger is incremented after a new meal is added,
   // which tells MealGrid to re-fetch from the database
+
+  const [editingMeal, setEditingMeal] = useState(null)
+  // editingMeal holds the meal object being edited, or null when closed
 
   // ── Auth ────────────────────────────────────────────────────────────────────
 
@@ -110,6 +114,13 @@ function App() {
     if (error) { console.error(error.message); return }
 
     setSavedMeals((prev) => prev.filter((m) => m.id !== mealId))
+  }
+
+  const handleMealDeleted = (mealId) => {
+  // Remove from saved meals if it was saved
+    setSavedMeals((prev) => prev.filter((m) => m.id !== mealId))
+  // Refresh the grid
+    setRefreshTrigger((n) => n + 1)
   }
 
   // ── Calendar ─────────────────────────────────────────────────────────────────
@@ -222,6 +233,19 @@ function App() {
         />
       )}
 
+      {editingMeal && (
+        <EditMealModal
+          meal={editingMeal}
+          userId={session.user.id}
+          onClose={() => setEditingMeal(null)}
+          onMealUpdated={() => {
+            setRefreshTrigger((n) => n + 1)
+            setEditingMeal(null)
+          }}
+        onMealDeleted={handleMealDeleted}
+        />
+      )}
+
       {activePage === "browse" && (
         <main className="app__main">
           <MealGrid
@@ -229,6 +253,8 @@ function App() {
             onAdd={handleAdd}
             onRemove={handleRemove}
             refreshTrigger={refreshTrigger}
+            onEdit={setEditingMeal}
+            userId={session.user.id}
           />
 
           {savedMeals.length > 0 && (
