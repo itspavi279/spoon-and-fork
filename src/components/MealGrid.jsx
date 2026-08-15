@@ -2,6 +2,16 @@ import { useState, useEffect } from "react"
 import MealCard from "./MealCard"
 import { supabase } from "../supabaseClient"
 
+// Splits a flat array into chunks of a given size
+// e.g. chunkArray([1..15], 10) → [[1..10], [11..15]]
+function chunkArray(arr, size) {
+  const chunks = []
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size))
+  }
+  return chunks
+}
+
 function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger, onEdit, userId }) {
   const [meals, setMeals] = useState([])
   const [search, setSearch] = useState("")
@@ -62,23 +72,27 @@ function MealGrid({ savedMeals, onAdd, onRemove, refreshTrigger, onEdit, userId 
         />
       </div>
 
-      {/* All meals in one flat grid — no category grouping */}
-      <div className="meal-grid__row">
-        {filtered.map((meal) => (
-         <MealCard
-            key={meal.id}
-            meal={meal}
-            onAdd={onAdd}
-            onRemove={onRemove}
-            isSaved={savedMeals.some((m) => m.id === meal.id)}
-            onEdit={onEdit}
-            isOwned={meal.user_id === userId}
-            // isOwned compares the meal's creator to the logged-in user
-            // null user_id (seeded meals) will never match, hiding the button
-            />
+      {/* Split filtered meals into rows of 10 */}
+      <div className="meal-grid__rows">
+        {chunkArray(filtered, 10).map((chunk, rowIndex) => (
+          <div key={rowIndex} className="meal-grid__row">
+            {chunk.map((meal) => (
+              <MealCard
+                key={meal.id}
+                meal={meal}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                isSaved={savedMeals.some((m) => m.id === meal.id)}
+                onEdit={onEdit}
+                isOwned={meal.user_id === userId}
+              />
+            ))}
+          </div>
         ))}
         {filtered.length === 0 && (
-          <p style={{ color: "#aaa", fontSize: "14px" }}>No meals match your search.</p>
+          <p style={{ color: "#aaa", fontSize: "14px", paddingLeft: "48px" }}>
+            No meals match your search.
+          </p>
         )}
       </div>
     </div>

@@ -66,6 +66,7 @@ body {
 
 /* Search */
 .meal-grid__toolbar {margin-bottom: 20px}
+
 .meal-grid__search { 
   width: 300px;
   padding: 10px 16px;
@@ -77,6 +78,7 @@ body {
 
 /*Category sections */
 .meal-grid__section { margin-bottom: 32px; }
+
 .meal-grid__category {
   font-size: 14px;
   font-weight: bold;
@@ -98,9 +100,16 @@ body {
   padding-right: 48px;
   margin-left: -48px;
   margin-right: -48px;
-  /* to adjust the buffer: change all four 48px values together:
-     padding-left, padding-right, margin-left, and margin-right.
-     They must always match the left/right value in .app__main. */
+  /* Each row scrolls horizontally independently if needed,
+     but with 10 cards capped per row this should rarely trigger */
+}
+
+/* Wraps all rows — scrolls vertically as more rows are added */
+.meal-grid__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* gap between each row of cards */
 }
 
 /* Meal Card */
@@ -188,6 +197,7 @@ body {
   background-color: #c8860a;
   padding: 12px 32px;
 }
+
 .saved-tray__label {
   background-color: #8b1a1a;
   color: white;
@@ -199,20 +209,59 @@ body {
   margin-bottom: 10px;
 }
 .saved-tray__row { display: flex; gap: 12px; }
-.saved-tray__card {
-  width: 120px;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 12px;
-  border: 2px solid #8b1a1a;
-}
-.saved-tray__card img { width: 100%; height: 70px; object-fit: cover; }
+
 .saved-tray__card span {
   display: block;
   background: #8b1a1a;
   color: white;
   padding: 4px 8px;
+}
+
+.saved-tray__card {
+  position: relative;
+  width: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #8b1a1a;
+  background: #8b1a1a;
+  display: flex;
+  flex-direction: column;
+}
+
+.saved-tray__card-img {
+  width: 100%;
+  height: 70px;
+  object-fit: cover;
+  display: block;
+}
+
+.saved-tray__card-name {
+  display: block;
+  background-color: #8b1a1a;
+  color: white;
+  font-size: 11px;
+  padding: 4px 8px;
+  flex: 1;
+}
+
+.saved-tray__card-clear {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-weight: bold;
+  color: #8b1a1a;
 }
 
 /* ── Calendar view layout ─────────────────────────────── */
@@ -459,6 +508,7 @@ body {
    Change the two 48px values to adjust the left/right buffer. */
 .app__main {
   padding: 24px 48px;
+  padding-bottom: 140px;
 }
 
 /* Calendar page removes padding so the split screen fills edge to edge */
@@ -474,51 +524,6 @@ body {
 /* Calendar page removes padding so the split screen fills edge to edge */
 .app__main--calendar {
   padding: 0;
-}
-
-/* Updated saved tray cards — match calendar meal card style */
-.saved-tray__card {
-  position: relative;  /* needed so the X button can be absolutely positioned */
-  width: 120px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 2px solid #8b1a1a;
-  background: white;
-}
-
-.saved-tray__card-img {
-  width: 100%;
-  height: 70px;
-  object-fit: cover;
-  display: block;
-}
-
-.saved-tray__card-name {
-  display: block;
-  background: #8b1a1a;
-  color: white;
-  font-size: 11px;
-  padding: 4px 8px;
-}
-
-.saved-tray__card-clear {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: white;
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  font-weight: bold;
-  color: #8b1a1a;
 }
 
 /* ── Auth screen ───────────────────────────────────────── */
