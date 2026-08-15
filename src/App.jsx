@@ -227,6 +227,13 @@ const handleDropMeal = async (date, meal) => {
         userEmail={session.user.email}
       />
 
+      {/* Decorative stripe divider */}
+        <div className="stripe-divider">
+          <div className="stripe-divider__red" />
+          <div className="stripe-divider__green" />
+          <div className="stripe-divider__yellow" />
+        </div>
+
       {/* Add meal modal — shown on top of everything when bowl icon is clicked */}
       {showAddMeal && (
         <AddMealModal

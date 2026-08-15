@@ -20,9 +20,10 @@ body {
 }
 
 .navbar__logo {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 700;
   color: #3a5a2a;
+  font-family: "gunter", sans-serif;
 }
 
 .navbar__icon-btn {
@@ -47,7 +48,7 @@ body {
 }
 
 .navbar__email {
-  font-size: 12px;
+  font-size: 10px;
   color: black;
 }
 
@@ -241,7 +242,8 @@ body {
 }
 
 .calendar-panel__title {
-  font-size: 22px;
+  font-size: 18px;
+  font-family: "gunter", sans-serif;
   color: #3a5a2a;
   flex: 1; /* pushes toggles and clear button to the right */
 }
@@ -410,6 +412,7 @@ body {
 .browse-panel__title {
   font-size: 18px;
   color: #3a5a2a;
+  font-family: "gunter", sans-serif;
 }
 
 .browse-panel__hint {
@@ -798,4 +801,28 @@ body {
 
 .modal__delete--confirm:hover {
   background: #c71616;
+}
+
+/* ── Decorative stripe divider ─────────────────────────── */
+.stripe-divider {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.stripe-divider__red {
+  height: 8px;
+  background-color: #8b1a1a;
+  margin-bottom: 3px;
+}
+
+.stripe-divider__green {
+  height: 8px;
+  background-color: #3a5a2a;
+  margin-bottom: 3px;
+}
+
+.stripe-divider__yellow {
+  height: 8px;
+  background-color: #c8860a;
 }
