@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient"
 function EditMealModal({ meal, onClose, onMealUpdated, onMealDeleted, userId }) {
   // Pre-populate all fields with the existing meal data
   const [name, setName] = useState(meal.name)
-  const [image, setImage] = useState(meal.image || "")
+  const [image, setImage] = useState(meal.image || "https://img.magnific.com/free-photo/delicious-vibrant-vegetarian-buddha-bowl_23-2152003893.jpg?semt=ais_test_b&w=740&q=80")
   const [recipe, setRecipe] = useState(meal.recipe || "")
   const [ingredients, setIngredients] = useState(meal.ingredients || [])
   const [ingredientInput, setIngredientInput] = useState("")

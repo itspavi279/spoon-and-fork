@@ -3,11 +3,11 @@ import { supabase } from "../supabaseClient"
 
 function AddMealModal({ onClose, onMealAdded, userId }) {
   const [name, setName] = useState("")
-  const [image, setImage] = useState("")
+  const [image, setImage] = useState("https://img.magnific.com/free-photo/delicious-vibrant-vegetarian-buddha-bowl_23-2152003893.jpg?semt=ais_test_b&w=740&q=80")
   const [recipe, setRecipe] = useState("")
   const [ingredientInput, setIngredientInput] = useState("")
   // ingredientInput is the text field — user types one ingredient at a time
-  const [ingredients, setIngredients] = useState([])
+  const [ingredients, setIngredients] = useState([""])
   // ingredients is the growing list of added ingredients shown as tags
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
