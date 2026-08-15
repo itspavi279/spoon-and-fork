@@ -154,29 +154,33 @@ function App() {
     setCalendarMeals(rebuilt)
   }
 
-  const handleDropMeal = async (date, meal) => {
-    if (!session) return
-    const existing = calendarMeals[date] || []
-    if (existing.length >= 3) return
+const handleDropMeal = async (date, meal) => {
+  if (!session) return
+  const existing = calendarMeals[date] || []
+  if (existing.length >= 3) return
 
-    const { data, error } = await supabase
-      .from("calendar_entries")
-      .insert({
-        meal_id: meal.id,
-        date,
-        slot_index: existing.length,
-        user_id: session.user.id,
-      })
-      .select()
-      .single()
+  // console.log("Dropping meal:", meal.id, "on date:", date, "slot:", existing.length, "user:", session.user.id)
 
-    if (error) { console.error(error.message); return }
+  const { data, error } = await supabase
+    .from("calendar_entries")
+    .insert({
+      meal_id: meal.id,
+      date,
+      slot_index: existing.length,
+      user_id: session.user.id,
+    })
+    .select()
+    .single()
 
-    setCalendarMeals((prev) => ({
-      ...prev,
-      [date]: [...(prev[date] || []), { ...meal, calendarRowId: data.id }],
-    }))
-  }
+  //console.log("Insert result:", data, "Error:", error)
+
+  if (error) { console.error("Drop error:", error.message); return }
+
+  setCalendarMeals((prev) => ({
+    ...prev,
+    [date]: [...(prev[date] || []), { ...meal, calendarRowId: data.id }],
+  }))
+}
 
   const handleClearDay = async (date, index) => {
     const entry = (calendarMeals[date] || [])[index]

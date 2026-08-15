@@ -65,15 +65,11 @@ function getMostRecentMonday() {
 
 // Calendar - Main Component
 
-function Calendar({ savedMeals }) {
+function Calendar({ savedMeals, calendarMeals, onDropMeal, onClearDay, onClearAll }) {
     //startDate = first day shown in calendar
     const [startDate, setStartDate ] = useState(getMostRecentMonday())
     //numDays = user can choose between displaying 3, 5, or 7 days
     const [numDays, setNumDays] = useState(7)
-
-    // 1. calendarMeals now stores arrays instead of single meals
-    // e.g. { "2026-07-07": [meal1, meal2], "2026-07-08": [meal3] }
-    const [calendarMeals, setCalendarMeals] = useState({})
 
     //array of date strings currently visible in calendar
     const visibleDates = getWeekDates(startDate, numDays)
@@ -96,35 +92,13 @@ const goBack = () => {
     // Drag and drop - user drops a draggable card onto a droppable day slot
     // active is the dragged item, over is the day it was dropped on
 
-    const handleDragEnd = (event) => {
+const handleDragEnd = (event) => {
   const { active, over } = event
   if (!over) return
-
   const meal = active.data.current.meal
   const date = over.id
-
-  setCalendarMeals((prev) => {
-    const existing = prev[date] || []
-    // If this slot already has 3 meals, ignore the drop entirely
-    if (existing.length >= 3) return prev
-    return { ...prev, [date]: [...existing, meal] }
-  })
+  onDropMeal(date, meal)
 }
-
-    // clear a meal from a specific day
-    const handleClearDay = (date, index) => {
-      setCalendarMeals((prev) => {
-        const updated = [...(prev[date] || [])]
-        updated.splice(index, 1) // remove just the one at this position
-        return { ...prev, [date]: updated }
-    })
-  }
-
-    //clear entire calendar
-    const handleClearAll = () => {
-        setCalendarMeals({})
-    }
-
 
   // Sensors - PointerSensor works for both mouse and touch (mobile)
 
@@ -159,7 +133,7 @@ const goBack = () => {
             </div>
 
             {/* Clear all button */}
-            <button className="calendar-panel__clear" onClick={handleClearAll}>
+            <button className="calendar-panel__clear" onClick={onClearAll}>
               🗑
             </button>
           </div>
@@ -180,7 +154,7 @@ const goBack = () => {
                 date={date}
                 meals={calendarMeals[date] || []}
                 // Pass the meal for this date (or null if none assigned yet)
-                onClear={handleClearDay}
+                onClear={onClearDay}
               />
             ))}
           </div>
