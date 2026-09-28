@@ -4,8 +4,20 @@
   padding: 0;
 }
 
+:root {
+  /* A very light paper grain: an SVG fractal-noise filter whose
+     colour channels are zeroed out and whose alpha is scaled way
+     down, so it reads as faint fibre/speckle rather than static. */
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+}
+
 body {
   background-color: #fdf3ec;
+  background-image: var(--paper-texture);
+  background-repeat: repeat;
+  background-attachment: fixed;
+  /* fixed attachment keeps the grain steady rather than sliding
+     as the page scrolls, like a texture printed on the page itself */
   font-family: sans-serif;
   color: #2e1a0e;
 }
@@ -93,6 +105,7 @@ body {
 /* meal-grid__row (the horizontal scrolling card container) */
 .meal-grid__row {
   display: flex;
+  align-items: flex-start;
   gap: 12px;
   overflow-x: auto;
   padding-bottom: 8px;
@@ -112,21 +125,84 @@ body {
   /* gap between each row of cards */
 }
 
-/* Meal Card */
+/* Meal Card
+   ── The card itself only animates size/elevation. The two "faces"
+   (closed vs. expanded) live on top of each other at all times and
+   crossfade + settle into place, instead of being swapped instantly. */
 .meal-card {
+  --meal-card-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
   min-width: 200px;
   max-width: 200px;
   width: 200px;
   height: 180px;
-  /* card never grows or shrinks regardless of content length */
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   background: white;
   border: 2px solid #8b1a1a;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition:
+    box-shadow 0.35s var(--meal-card-ease),
+    transform 0.25s ease;
+}
+
+.meal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.meal-card--open {
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  /* lift the open card above its still-closed neighbours —
+     width/height never change, the card's footprint stays fixed
+     and the expanded content scrolls internally instead */
+}
+
+.meal-card--open:hover {
+  transform: none;
+  /* the hover lift is only for closed cards — an open card is
+     already "raised" via its shadow */
+}
+
+/* Both faces are stacked in the same box via absolute positioning,
+   so switching between them is a crossfade rather than a swap. */
+.meal-card__face {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  transition:
+    opacity 0.28s ease,
+    transform 0.35s var(--meal-card-ease);
+}
+
+.meal-card__face--closed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.meal-card--open .meal-card__face--closed {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+}
+
+.meal-card__face--expanded {
+  opacity: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+.meal-card--open .meal-card__face--expanded {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  transition-delay: 0.08s;
+  /* small delay so the expanded content settles in just after
+     the card has started growing, rather than all at once */
 }
 
 .meal-card__image-wrap {
@@ -168,14 +244,6 @@ body {
   flex-shrink: 0;
 }
 
-.meal-card__expanded {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  /* Fill the full fixed card height */
-  overflow: hidden;
-}
-
 .meal-card__body {
   padding: 10px;
   font-size: 13px;
@@ -186,9 +254,24 @@ body {
   flex: 1;
   /* flex: 1 makes the body fill all space between the title bar
      and the bottom of the fixed-height card */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+  /* the body text fades/rises in slightly after the face itself,
+     giving the open animation a soft, staggered feel */
+}
+
+.meal-card--open .meal-card__body {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Saved tray */
+@keyframes savedTrayIn {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .saved-tray {
   position: fixed;
   bottom: 0;
@@ -196,6 +279,7 @@ body {
   right: 0;
   background-color: #c8860a;
   padding: 12px 32px;
+  animation: savedTrayIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .saved-tray__label {
@@ -208,13 +292,18 @@ body {
   cursor: pointer;
   margin-bottom: 10px;
 }
-.saved-tray__row { display: flex; gap: 12px; }
+.saved-tray__row { display: flex; }
 
 .saved-tray__card span {
   display: block;
   background: #8b1a1a;
   color: white;
   padding: 4px 8px;
+}
+
+@keyframes trayCardIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .saved-tray__card {
@@ -227,6 +316,24 @@ body {
   background: #8b1a1a;
   display: flex;
   flex-direction: column;
+  margin-right: 12px;
+  /* margin (rather than the row's old `gap`) so an individual card can
+     collapse its own spacing down to 0 as it leaves, instead of a
+     leftover gap sitting empty next to a shrinking card */
+  animation: trayCardIn 0.3s var(--meal-card-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    width 0.22s ease,
+    margin-right 0.22s ease;
+}
+
+.saved-tray__card--leaving {
+  opacity: 0;
+  transform: scale(0.85);
+  width: 0;
+  margin-right: 0;
+  pointer-events: none;
 }
 
 .saved-tray__card-img {
@@ -394,6 +501,11 @@ body {
 .calendar-day__slot {
   flex: 1;
   padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* gap matches the slot's own padding, so the space between stacked
+     meals equals the space from the day header down to the first meal */
 }
 
 /* Empty state inside a day */
@@ -452,7 +564,8 @@ body {
   flex: 1; /* takes up 1/3 of the screen */
   padding: 24px;
   overflow-y: auto;
-  background: #fdf3ec;
+  background-color: #fdf3ec;
+  background-image: var(--paper-texture);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -506,19 +619,18 @@ body {
 /* ── Page layout ───────────────────────────────────────── */
 /* .app__main controls the outer padding of every page.
    Change the two 48px values to adjust the left/right buffer. */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .app__main {
   padding: 24px 48px;
   padding-bottom: 140px;
-}
-
-/* Calendar page removes padding so the split screen fills edge to edge */
-.app__main--calendar {
-  padding: 0;
-}/* ── Page layout ───────────────────────────────────────── */
-/* .app__main controls the outer padding of every page.
-   Change the two 48px values to adjust the left/right buffer. */
-.app__main {
-  padding: 24px 48px;
+  animation: pageIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* browse and calendar are swapped by conditional rendering rather
+     than a real route change, so each one gets this entrance the
+     moment it mounts — e.g. clicking "Saved →" */
 }
 
 /* Calendar page removes padding so the split screen fills edge to edge */
@@ -533,6 +645,7 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #fdf3ec;
+  background-image: var(--paper-texture);
 }
 
 .auth__card {
@@ -606,6 +719,26 @@ body {
 }
 
 /* ── Add meal modal ────────────────────────────────────── */
+@keyframes modalBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalBackdropOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes modalOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(12px) scale(0.97); }
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -615,6 +748,11 @@ body {
   justify-content: center;
   z-index: 1000;
   /* z-index 1000 puts the modal above everything else on the page */
+  animation: modalBackdropIn 0.25s ease both;
+}
+
+.modal-backdrop--closing {
+  animation: modalBackdropOut 0.18s ease both;
 }
 
 .modal {
@@ -626,6 +764,11 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  animation: modalIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.modal--closing {
+  animation: modalOut 0.18s ease both;
 }
 
 .modal__header {
@@ -812,7 +955,11 @@ body {
 .stripe-divider {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  /* full-bleed technique: guarantees edge-to-edge width regardless
+     of any ancestor's own width/overflow, instead of relying on
+     100% of a parent that might not itself be full width */
 }
 
 .stripe-divider__red {

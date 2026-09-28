@@ -12,6 +12,17 @@ function EditMealModal({ meal, onClose, onMealUpdated, onMealDeleted, userId }) 
   const [error, setError] = useState("")
   const [confirmDelete, setConfirmDelete] = useState(false)
   // confirmDelete adds a safety step before permanently deleting
+  const [closing, setClosing] = useState(false)
+  // closing plays the exit animation, then actually unmounts via onClose
+  // once it's had time to finish (see the CLOSE_ANIM_MS timeout below)
+
+  const CLOSE_ANIM_MS = 180
+
+  const handleClose = () => {
+    if (closing) return
+    setClosing(true)
+    setTimeout(onClose, CLOSE_ANIM_MS)
+  }
 
   const handleAddIngredient = () => {
     const trimmed = ingredientInput.trim().toLowerCase()
@@ -69,7 +80,7 @@ function EditMealModal({ meal, onClose, onMealUpdated, onMealDeleted, userId }) 
 
     // Tell the parent to refresh the meal grid and close the modal
     onMealUpdated()
-    onClose()
+    handleClose()
     setLoading(false)
   }
 
@@ -94,16 +105,22 @@ function EditMealModal({ meal, onClose, onMealUpdated, onMealDeleted, userId }) 
     if (error) { setError(error.message); setLoading(false); return }
 
     onMealDeleted(meal.id)
-    onClose()
+    handleClose()
     setLoading(false)
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`modal-backdrop ${closing ? "modal-backdrop--closing" : ""}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`modal ${closing ? "modal--closing" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal__header">
           <h2 className="modal__title">Edit meal</h2>
-          <button className="modal__close" onClick={onClose}>✕</button>
+          <button className="modal__close" onClick={handleClose}>✕</button>
         </div>
 
         <div className="modal__body">
@@ -166,7 +183,7 @@ function EditMealModal({ meal, onClose, onMealUpdated, onMealDeleted, userId }) 
           </button>
 
           <div className="modal__footer-right">
-            <button className="modal__cancel" onClick={onClose}>Cancel</button>
+            <button className="modal__cancel" onClick={handleClose}>Cancel</button>
             <button className="modal__save" onClick={handleSave} disabled={loading}>
               {loading ? "Saving..." : "Save meal"}
             </button>

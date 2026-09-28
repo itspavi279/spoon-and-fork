@@ -9,6 +9,7 @@ import AddMealModal from "./components/AddMealModal"
 import { supabase } from "./supabaseClient"
 import "./index.css"
 import EditMealModal from "./components/EditMealModal"
+import SavedTrayCard from "./components/SavedTrayCard"
 
 function App() {
   const [session, setSession] = useState(null)
@@ -278,14 +279,7 @@ const handleDropMeal = async (date, meal) => {
               </button>
               <div className="saved-tray__row">
                 {savedMeals.map((meal) => (
-                  <div key={meal.id} className="saved-tray__card">
-                    <img src={meal.image} alt={meal.name} className="saved-tray__card-img" />
-                    <span className="saved-tray__card-name">{meal.name}</span>
-                    <button
-                      className="saved-tray__card-clear"
-                      onClick={() => handleRemove(meal.id)}
-                    >✕</button>
-                  </div>
+                  <SavedTrayCard key={meal.id} meal={meal} onRemove={handleRemove} />
                 ))}
               </div>
             </div>
